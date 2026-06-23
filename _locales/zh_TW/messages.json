@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "法律判決 AI 摘要助手",
+    "description": "The name of the extension"
+  },
+  "extensionDescription": {
+    "message": "智慧判決書摘要及爭點解析工具 — 支援 AI 摘要、法學爭點分析、RAG 智慧查詢、多資料庫管理與雲端同步",
+    "description": "The description of the extension"
+  }
+}

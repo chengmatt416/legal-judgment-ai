@@ -1,0 +1,67 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extensionName__",
+  "version": "1.0.0",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "zh_TW",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "alarms",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "https://judgment.judicial.gov.tw/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://*.workers.dev/*"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://judgment.judicial.gov.tw/*"
+      ],
+      "js": [
+        "src/content/floating-panel.js",
+        "src/content/content-script.js"
+      ],
+      "css": [
+        "src/content/floating-panel.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "法律判決 AI 摘要助手"
+  },
+  "options_page": "src/options/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/content/floating-panel.css",
+        "src/utils/dom-parser.js",
+        "src/utils/constants.js"
+      ],
+      "matches": [
+        "https://judgment.judicial.gov.tw/*"
+      ]
+    }
+  ]
+}

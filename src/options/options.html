@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>法律判決 AI 摘要助手 — 控制台</title>
+  <link rel="stylesheet" href="options.css">
+  <script src="options.js" type="module" defer></script>
+</head>
+<body class="theme-dark">
+  <div class="options-container">
+    <!-- 側邊欄 Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <svg viewBox="0 0 24 24" class="sidebar-logo"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+        <h2>AI 判決控制台</h2>
+      </div>
+      <nav class="sidebar-menu">
+        <button class="menu-item active" data-tab="library">📚 判決文庫管理</button>
+        <button class="menu-item" data-tab="settings">⚙️ 系統進階設定</button>
+        <button class="menu-item" data-tab="stats">📊 數據統計中心</button>
+        <button class="menu-item" data-tab="ai-search">🤖 AI 智慧查詢</button>
+      </nav>
+      <div class="sidebar-footer">
+        版本：v1.0.0
+      </div>
+    </aside>
+
+    <!-- 右側主要內容區 -->
+    <main class="main-content">
+      <!-- 分頁一：判決文庫管理 -->
+      <section class="tab-pane active" id="tab-library">
+        <header class="content-header">
+          <div class="header-title">
+            <h1>📚 判決文庫管理</h1>
+            <p class="header-subtitle">瀏覽、搜尋、篩選與刪除已儲存之法律判決書與 AI 分析報告</p>
+          </div>
+          <div class="header-actions">
+            <select class="select-dropdown" id="lib-select-db" style="width:180px; margin:0;">
+              <!-- 填入資料庫 -->
+            </select>
+          </div>
+        </header>
+
+        <!-- 篩選與搜尋列 -->
+        <div class="filter-bar">
+          <input type="text" id="lib-search-input" class="search-input" placeholder="關鍵字搜尋案號、法院、案由或事實...">
+          <select class="filter-select" id="lib-filter-type">
+            <option value="all">所有案件類別</option>
+            <option value="刑事">刑事</option>
+            <option value="民事">民事</option>
+            <option value="行政">行政</option>
+            <option value="家事">家事</option>
+          </select>
+        </div>
+
+        <!-- 判決清單列表 -->
+        <div class="judgment-grid-container">
+          <table class="judgment-table" id="judgment-table">
+            <thead>
+              <tr>
+                <th width="22%">案號</th>
+                <th width="15%">法院</th>
+                <th width="12%">類別</th>
+                <th width="15%">案由</th>
+                <th width="12%">裁判日期</th>
+                <th width="12%">分析時間</th>
+                <th width="12%" style="text-align:center;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="judgment-table-body">
+              <tr>
+                <td colspan="7" class="empty-state">載入判決列表中...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 分頁二：系統進階設定 -->
+      <section class="tab-pane" id="tab-settings">
+        <header class="content-header">
+          <div class="header-title">
+            <h1>⚙️ 系統進階設定</h1>
+            <p class="header-subtitle">調整 AI 運作模型、預設懸浮視窗大小、雲端同步伺服器設定等</p>
+          </div>
+        </header>
+
+        <div class="settings-form">
+          <!-- 卡片：Gemini API -->
+          <div class="settings-card">
+            <h3>🔑 Gemini AI 密鑰與模型</h3>
+            <div class="settings-row">
+              <label>Gemini API Key 密鑰池</label>
+              <div id="options-api-keys-container" class="options-keys-container">
+                <!-- 動態生成多個金鑰輸入框 -->
+              </div>
+              <div class="options-api-actions">
+                <button type="button" class="btn-secondary" id="btn-add-options-key" style="padding: 6px 12px; font-size: 12.5px;">+ 新增金鑰</button>
+              </div>
+            </div>
+            <div class="settings-row">
+              <label for="opt-model">核心解析模型</label>
+              <select id="opt-model" class="select-dropdown">
+                <option value="gemini-3.5-flash">gemini-3.5-flash (推薦：速度快、成本低)</option>
+                <option value="gemini-3.5-pro">gemini-3.5-pro (深度分析：邏輯推理極強)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 卡片：懸浮視窗 -->
+          <div class="settings-card">
+            <h3>🖥️ 頁面懸浮視窗偏好</h3>
+            <div class="settings-row double-inputs">
+              <div>
+                <label for="opt-panel-width">預設寬度 (像素)</label>
+                <input type="number" id="opt-panel-width" min="380" max="1200">
+              </div>
+              <div>
+                <label for="opt-panel-height">預設高度 (像素)</label>
+                <input type="number" id="opt-panel-height" min="300" max="1080">
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡片：雲端同步 -->
+          <div class="settings-card">
+            <h3>☁️ Cloudflare Workers 雲端同步</h3>
+            <div class="settings-row">
+              <label for="opt-worker-url">Worker API URL</label>
+              <input type="text" id="opt-worker-url" placeholder="例如：https://my-sync-worker.username.workers.dev">
+            </div>
+            <div class="settings-row checkbox-row">
+              <input type="checkbox" id="opt-auto-sync">
+              <label for="opt-auto-sync">啟用背景自動同步 (每 15 分鐘)</label>
+            </div>
+          </div>
+
+          <!-- 卡片：資料管理與清理 -->
+          <div class="settings-card danger-zone">
+            <h3>⚠️ 危險重置專區</h3>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">此動作無法復原。將會清除所有 IndexedDB 本地資料庫內容、所有判決書摘要、標籤以及重置設定值。</p>
+            <button class="btn-danger" id="btn-reset-all">🔥 刪除全部資料庫並還原預設值</button>
+          </div>
+
+          <div class="settings-actions">
+            <button class="btn-primary" id="btn-save-settings" style="padding:10px 24px; font-size:14px;">儲存設定變更</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 分頁三：數據統計中心 -->
+      <section class="tab-pane" id="tab-stats">
+        <header class="content-header">
+          <div class="header-title">
+            <h1>📊 數據統計中心</h1>
+            <p class="header-subtitle">查看資料庫使用狀況、標籤排行以及 AI API 使用統計</p>
+          </div>
+        </header>
+
+        <div class="stats-grid">
+          <!-- 統計卡片 -->
+          <div class="stats-box card">
+            <div class="stats-num" id="stat-total-judgments">0</div>
+            <div class="stats-label">總判決分析筆數</div>
+          </div>
+          <div class="stats-box card">
+            <div class="stats-num" id="stat-total-tags">0</div>
+            <div class="stats-label">已使用智慧標籤</div>
+          </div>
+          <div class="stats-box card">
+            <div class="stats-num" id="stat-quota-used">0 / 1400</div>
+            <div class="stats-label">今日 Embedding 配額 (RPD)</div>
+          </div>
+        </div>
+
+        <div class="stats-details-row">
+          <!-- 標籤雲/排行榜 -->
+          <div class="stats-detail-card card" style="flex: 1;">
+            <h3>🏷️ 最常用法學標籤排行</h3>
+            <ul class="stats-list" id="stats-tags-list">
+              <li style="color:var(--text-muted); font-size:13px; text-align:center; padding-top:40px;">無標籤統計資料</li>
+            </ul>
+          </div>
+          
+          <!-- 模型分佈 -->
+          <div class="stats-detail-card card" style="flex: 1;">
+            <h3>⚖️ 資料庫分佈概況</h3>
+            <ul class="stats-list" id="stats-db-list">
+              <li style="color:var(--text-muted); font-size:13px; text-align:center; padding-top:40px;">無資料庫統計資料</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 分頁四：AI 智慧查詢 -->
+      <section class="tab-pane" id="tab-ai-search">
+        <header class="content-header">
+          <div class="header-title">
+            <h1>🤖 AI 智慧查詢</h1>
+            <p class="header-subtitle">利用 AI 搜尋司法院裁判書，從數萬筆判決中交叉分析出答案</p>
+          </div>
+        </header>
+
+        <!-- 四大模式選卡列 -->
+        <div class="ai-search-modes">
+          <div class="mode-card active" data-mode="concept">
+            <div class="mode-icon">🔍</div>
+            <div class="mode-title">觀念查詢</div>
+            <div class="mode-desc">輸入不了解的法律觀念，由 AI 搜尋裁判書找出法理慣例</div>
+          </div>
+          <div class="mode-card" data-mode="similar">
+            <div class="mode-icon">📋</div>
+            <div class="mode-title">相似案件</div>
+            <div class="mode-desc">輸入案情敘述，由 AI 檢索情節相仿之歷審判決</div>
+          </div>
+          <div class="mode-card" data-mode="estimate">
+            <div class="mode-icon">⚖️</div>
+            <div class="mode-title">預估刑度/賠償</div>
+            <div class="mode-desc">輸入案情描述，由 AI 統計判決之慣例刑度與賠償金</div>
+          </div>
+          <div class="mode-card" data-mode="calculator">
+            <div class="mode-icon">🧮</div>
+            <div class="mode-title">裁判費計算機</div>
+            <div class="mode-desc">輸入標的金額或訴訟性質，依法精確計算訴訟裁判費用</div>
+          </div>
+        </div>
+
+        <!-- 輸入區域 (動態切換) -->
+        <div class="ai-search-input-area card">
+          <div id="search-mode-container">
+            <!-- 由 JS 動態生成表單 -->
+          </div>
+        </div>
+
+        <!-- 搜尋進度區 (預設隱藏) -->
+        <div class="search-progress-container card hidden" id="search-progress-area">
+          <div class="progress-header">
+            <span class="progress-spinner"></span>
+            <span class="progress-title" id="progress-status-title">搜尋與分析中...</span>
+          </div>
+          <div class="progress-timeline" id="progress-timeline-steps">
+            <!-- 進度步驟動態加入 -->
+          </div>
+        </div>
+
+        <!-- 搜尋結果區 (預設隱藏) -->
+        <div class="ai-result-container card hidden" id="ai-result-area">
+          <div class="result-header">
+            <h3>💡 AI 分析結果報告</h3>
+            <button class="btn-secondary btn-small" id="btn-copy-ai-answer">📋 複製回答</button>
+          </div>
+          <div class="ai-answer-block" id="ai-answer-content">
+            <!-- 回答內容 -->
+          </div>
+          
+          <div class="citations-section">
+            <h4>📎 引用判決書資料來源</h4>
+            <div class="citations-grid" id="citations-list-grid">
+              <!-- 引用清單 -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 判決書詳細分析報告彈出 Modal -->
+  <div class="modal-overlay hidden" id="report-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 id="modal-report-title">判決摘要細節</h2>
+        <button class="modal-close" id="btn-close-modal">✕</button>
+      </div>
+      <div class="modal-body" id="modal-report-content">
+        <!-- 報告內容由 JavaScript 填入 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modal-btn-copy">📋 複製文字</button>
+        <button class="btn-primary" id="modal-btn-export">📤 匯出網頁</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-popup" id="opt-toast"></div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "legal-judgment-sync-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for Legal Judgment AI Assistant Sync",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+name = "legal-judgment-sync-worker"
+main = "src/index.js"
+compatibility_date = "2024-03-01"
+
+[vars]
+# 預設的同步啟用碼，多個請用逗號隔開。部署時可在 Cloudflare Dashboard 設定更安全的環境變數。
+ACTIVATION_CODES = "admin123,lawyer789,legalai-sync-code"
+# JWT 加密金鑰，建議在部署時於 Cloudflare Secret 設定。
+JWT_SECRET = "legal-judgment-ai-secret-default-key-123456"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "legal-judgment-sync-db"
+database_id = "d1-database-id-placeholder"

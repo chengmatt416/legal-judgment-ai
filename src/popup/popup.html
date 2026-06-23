@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>法律判決 AI 摘要助手</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="popup.js" defer></script>
+</head>
+<body class="theme-dark">
+  <div class="popup-container">
+    <!-- 頂部 Header -->
+    <header class="popup-header">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" class="logo-icon"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+        <h1>⚖️ 法律判決 AI 摘要助手</h1>
+      </div>
+      <button class="settings-link-btn" id="btn-open-options" title="開啟進階設定">⚙️</button>
+    </header>
+
+    <!-- 主體內容 -->
+    <main class="popup-body">
+      <!-- 當前網頁分析動作區 -->
+      <section class="action-section card">
+        <div id="page-detect-msg" class="info-msg">🔍 正在偵測當前網頁...</div>
+        <button class="btn-primary full-width hidden" id="btn-start-analyze">
+          ✨ 開始 AI 摘要與爭點解析
+        </button>
+      </section>
+
+      <!-- Gemini API Key 配置區 -->
+      <section class="api-section card">
+        <div class="section-title">🔑 Gemini API 密鑰設定</div>
+        <div id="popup-api-keys-container" class="keys-list-container">
+          <!-- 動態生成多個金鑰輸入框 -->
+        </div>
+        <div class="api-actions-row">
+          <button class="btn-small btn-secondary" id="btn-add-popup-key">+ 新增金鑰</button>
+          <button class="btn-small btn-primary" id="btn-save-api-key" style="margin-left: auto;">驗證並儲存</button>
+        </div>
+        <div id="api-key-status" class="status-indicator">⚠️ 未設定密鑰</div>
+      </section>
+
+      <!-- 資料庫切換與管理 -->
+      <section class="database-section card">
+        <div class="section-header">
+          <div class="section-title">🗂️ 本地資料庫管理</div>
+          <button class="text-link-btn" id="btn-toggle-add-db">+ 新增</button>
+        </div>
+        
+        <!-- 新增資料庫表單 (預設隱藏) -->
+        <div class="add-db-form hidden" id="add-db-form">
+          <input type="text" id="input-db-name" placeholder="資料庫名稱 (例如：商事法研究)">
+          <input type="text" id="input-db-desc" placeholder="簡短描述...">
+          <div class="color-picker-row">
+            <span style="font-size:12px; color:var(--text-muted);">標記顏色：</span>
+            <div class="color-option active" style="background:#6366F1;" data-color="#6366F1"></div>
+            <div class="color-option" style="background:#8B5CF6;" data-color="#8B5CF6"></div>
+            <div class="color-option" style="background:#06B6D4;" data-color="#06B6D4"></div>
+            <div class="color-option" style="background:#10B981;" data-color="#10B981"></div>
+            <div class="color-option" style="background:#EF4444;" data-color="#EF4444"></div>
+            <div class="color-option" style="background:#F59E0B;" data-color="#F59E0B"></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-small" id="btn-cancel-db">取消</button>
+            <button class="btn-small btn-primary" id="btn-save-db">建立</button>
+          </div>
+        </div>
+
+        <select class="select-dropdown" id="select-active-db">
+          <!-- 資料庫列表動態填入 -->
+        </select>
+        <div class="db-meta-info" id="db-meta-info">載入中...</div>
+      </section>
+
+      <!-- 雲端同步與備份匯入 -->
+      <section class="sync-section card">
+        <div class="section-title">☁️ 資料同步與備份</div>
+        
+        <div id="sync-active-area" class="hidden">
+          <div class="sync-status-row">
+            <span class="status-indicator success">🟢 雲端同步已啟用</span>
+            <button class="btn-small btn-secondary" id="btn-sync-now">立即同步</button>
+          </div>
+          <div class="sync-time-row" id="sync-time-info">上次同步：未同步</div>
+        </div>
+
+        <div id="sync-inactive-area">
+          <div class="info-msg" style="margin-bottom:8px;">輸入啟用碼即可存取 Cloudflare 雲端資料庫：</div>
+          <div class="input-group">
+            <input type="text" id="input-activation-code" placeholder="輸入雲端同步啟用碼...">
+            <button class="btn-primary" id="btn-activate-sync">啟用</button>
+          </div>
+        </div>
+
+        <!-- 離線備份按鈕區 -->
+        <div class="backup-actions">
+          <button class="footer-btn" id="btn-export-zip" style="flex:1;">
+            📤 匯出 ZIP (含向量)
+          </button>
+          <button class="footer-btn" id="btn-import-zip" style="flex:1;">
+            📥 匯入 ZIP
+          </button>
+          <input type="file" id="file-import-input" accept=".zip" class="hidden">
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部資訊與統計 -->
+    <footer class="popup-footer">
+      <div id="footer-stats">已分析 0 篇判決書</div>
+      <div class="footer-links">
+        <span class="theme-toggle" id="btn-theme-toggle">🌙</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast 提示區 -->
+  <div class="toast-popup" id="toast-popup"></div>
+</body>
+</html>
