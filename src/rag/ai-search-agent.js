@@ -150,9 +150,9 @@ function repairTruncatedJson(jsonStr) {
 async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = null, onChunk = null) {
   const modelsToTry = [];
   if (model.includes('flash')) {
-    modelsToTry.push('gemini-3.5-flash', model, 'gemini-3-flash', 'gemini-3-flash-preview', 'gemini-2.5-flash', 'gemini-1.5-flash');
+    modelsToTry.push('gemini-3.5-flash', model, 'gemini-2.5-flash', 'gemini-1.5-flash');
   } else if (model.includes('pro')) {
-    modelsToTry.push('gemini-3.5-pro', model, 'gemini-3-pro', 'gemini-3-pro-preview', 'gemini-2.5-pro', 'gemini-1.5-pro');
+    modelsToTry.push('gemini-3.5-pro', model, 'gemini-2.5-pro', 'gemini-1.5-pro');
   } else {
     modelsToTry.push(model);
   }
