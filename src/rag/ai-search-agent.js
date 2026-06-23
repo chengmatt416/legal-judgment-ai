@@ -161,6 +161,9 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
   const isStream = typeof onChunk === 'function';
   const apiAction = isStream ? 'streamGenerateContent' : 'generateContent';
   
+  const keys = apiKey ? apiKey.split(/[\s,;\n]+/).map(k => k.trim()).filter(Boolean) : [];
+  const maxAttempts = Math.max(3, keys.length);
+  
   let lastError;
   for (const m of uniqueModels) {
     const payload = {
@@ -177,7 +180,7 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
       payload.generationConfig.responseSchema = jsonSchema;
     }
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < maxAttempts; i++) {
       const activeKey = getActiveApiKey(apiKey);
       const url = `${GEMINI_API.BASE_URL}/${m}:${apiAction}?key=${activeKey}`;
       
@@ -311,11 +314,11 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
         
         lastError = errorToThrow;
         
-        if (errorToThrow.message && (errorToThrow.message.includes('[API 錯誤]') || errorToThrow.message.includes('[安全限制]'))) {
+        if (errorToThrow.message && errorToThrow.message.includes('[安全限制]')) {
           throw errorToThrow;
         }
 
-        console.warn(`[ai-search-agent] 呼叫 ${m} 失敗 (${i + 1}/3):`, err.message);
+        console.warn(`[ai-search-agent] 呼叫 ${m} 失敗 (${i + 1}/${maxAttempts}):`, err.message);
         if (err.message && err.message.includes('404')) {
           break; // Skip retry for 404 errors
         }
