@@ -166,6 +166,7 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
   
   let lastError;
   for (const m of uniqueModels) {
+    let modelExists = true;
     const payload = {
       contents: [{ parts: [{ text: userPrompt }] }],
       systemInstruction: { parts: [{ text: systemPrompt }] },
@@ -203,13 +204,17 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
           const errStatus = res.status;
           
           if (errStatus === 400 || errStatus === 403) {
-            throw new Error(`[API 錯誤] ${errMsg}`);
+            const apiErr = new Error(`[API 錯誤] ${errMsg}`);
+            apiErr.status = errStatus;
+            throw apiErr;
           }
           if (errStatus === 404) {
             console.warn(`[ai-search-agent] 模型 ${m} 不存在 (HTTP 404)，嘗試下一個模型。`);
             break; 
           }
-          throw new Error(errMsg);
+          const otherErr = new Error(errMsg);
+          otherErr.status = errStatus;
+          throw otherErr;
         }
 
         let text = "";
@@ -319,15 +324,32 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
         }
 
         console.warn(`[ai-search-agent] 呼叫 ${m} 失敗 (${i + 1}/${maxAttempts}):`, err.message);
-        if (err.message && err.message.includes('404')) {
+        
+        if (err.status === 404 || (err.message && err.message.includes('404'))) {
+          modelExists = false;
           break; // Skip retry for 404 errors
         }
+
+        // 決定重試延遲時間
+        let delayMs = 1000 * (i + 1);
+        if (err.status === 400 || err.status === 403) {
+          delayMs = 0; // 金鑰無效或客戶端錯誤時，直接輪替下一把，無需延遲
+        }
+        
         if (err.name === 'AbortError' || (err.message && (err.message.includes('aborted') || err.message.includes('abort')))) {
           console.warn(`[ai-search-agent] 呼叫 ${m} 超時 (連線或串流中斷)，跳過此模型。`);
           break; // Skip to next model if it times out
         }
-        await new Promise(r => setTimeout(r, 1000 * (i + 1))); // 指數退避延遲
+
+        if (delayMs > 0) {
+          await new Promise(r => setTimeout(r, delayMs)); // 指數退避延遲
+        }
       }
+    }
+
+    // 如果該模型的所有嘗試都失敗，且不是因為模型不存在(404)，則直接拋出錯誤，避免漫長地嘗試其他模型
+    if (modelExists && lastError) {
+      throw lastError;
     }
   }
   throw lastError;
