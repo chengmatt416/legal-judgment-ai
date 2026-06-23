@@ -244,7 +244,7 @@ ${query}
 
   let response;
   // 優先且每次皆嘗試最新一代的 gemini-3.5-flash，不永久將降級結果寫入設定中
-  const modelsToTry = ['gemini-3.5-flash', GEMINI_API.MODELS.FLASH, 'gemini-3-flash-preview', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+  const modelsToTry = ['gemini-3.5-flash', GEMINI_API.MODELS.FLASH, 'gemini-3-flash', 'gemini-3-flash-preview', 'gemini-2.5-flash', 'gemini-1.5-flash'];
 
   // 去除重複的模型 ID
   const uniqueModels = [...new Set(modelsToTry)];
