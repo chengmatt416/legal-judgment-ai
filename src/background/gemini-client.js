@@ -230,7 +230,7 @@ export async function analyzeJudgment(apiKey, rawText, model = GEMINI_API.MODELS
   
   if (model.includes('flash')) {
     // 優先且每次皆嘗試最新一代的 gemini-3.5-flash，不永久將降級結果寫回設定
-    modelsToTry.push('gemini-3.5-flash', model, 'gemini-2.5-flash', 'gemini-1.5-flash');
+    modelsToTry.push('gemini-3.5-flash', model, 'gemini-3-flash');
   } else if (model.includes('pro')) {
     // 優先且每次皆嘗試最新一代的 gemini-3.5-pro，不永久將降級結果寫回設定
     modelsToTry.push('gemini-3.5-pro', model, 'gemini-2.5-pro', 'gemini-1.5-pro');
