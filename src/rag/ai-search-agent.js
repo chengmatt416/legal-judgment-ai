@@ -334,6 +334,8 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
         let delayMs = 1000 * (i + 1);
         if (err.status === 400 || err.status === 403) {
           delayMs = 0; // 金鑰無效或客戶端錯誤時，直接輪替下一把，無需延遲
+        } else if (err.status === 429 && keys.length > 1) {
+          delayMs = 0; // 有多個金鑰時，頻率限制 (429) 可直接嘗試下一把，無需延遲
         }
         
         if (err.name === 'AbortError' || (err.message && (err.message.includes('aborted') || err.message.includes('abort')))) {
