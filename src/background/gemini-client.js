@@ -29,7 +29,7 @@ export async function validateApiKey(apiKey) {
   if (keys.length === 0) return false;
 
   for (const key of keys) {
-    const url = `${GEMINI_API.BASE_URL}/${GEMINI_API.MODELS.FLASH}:generateContent?key=${key}`;
+    const url = `${GEMINI_API.BASE_URL}/gemini-1.5-flash:generateContent?key=${key}`;
     const payload = {
       contents: [{ parts: [{ text: 'Hello' }] }],
       generationConfig: { maxOutputTokens: 5 }
