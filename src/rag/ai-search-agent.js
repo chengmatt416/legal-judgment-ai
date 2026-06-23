@@ -158,6 +158,9 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
   }
   const uniqueModels = [...new Set(modelsToTry)];
   
+  const isStream = typeof onChunk === 'function';
+  const apiAction = isStream ? 'streamGenerateContent' : 'generateContent';
+  
   let lastError;
   for (const m of uniqueModels) {
     const payload = {
@@ -176,7 +179,7 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
 
     for (let i = 0; i < 3; i++) {
       const activeKey = getActiveApiKey(apiKey);
-      const url = `${GEMINI_API.BASE_URL}/${m}:streamGenerateContent?key=${activeKey}`;
+      const url = `${GEMINI_API.BASE_URL}/${m}:${apiAction}?key=${activeKey}`;
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 秒連線建立超時
@@ -207,7 +210,7 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
         }
 
         let text = "";
-        if (res.body) {
+        if (isStream && res.body) {
           const reader = res.body.getReader();
           const decoder = new TextDecoder("utf-8");
           let accumulatedText = "";
@@ -227,7 +230,20 @@ async function callGemini(apiKey, model, systemPrompt, userPrompt, jsonSchema = 
 
           try {
             while (true) {
-              const { done, value } = await reader.read();
+              // 為了防止 reader.read() 在 abort 後依然懸掛，我們可以用 Promise.race 加上訊號監測
+              const readPromise = reader.read();
+              const abortPromise = new Promise((_, reject) => {
+                const checkAbort = () => {
+                  if (controller.signal.aborted) {
+                    reject(new Error('AbortError'));
+                  } else {
+                    setTimeout(checkAbort, 1000);
+                  }
+                };
+                setTimeout(checkAbort, 1000);
+              });
+
+              const { done, value } = await Promise.race([readPromise, abortPromise]);
               if (done) break;
               isFirstChunk = false;
               resetInactivityTimeout(); // 每收到一個 chunk 就重置計時器
