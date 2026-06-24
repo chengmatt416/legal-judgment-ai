@@ -162,8 +162,8 @@ function updateApiKeyStatus(isValid, keyCount = 0) {
   const status = document.getElementById('api-key-status');
   if (isValid) {
     if (keyCount > 0 && keyCount < 3) {
-      status.innerText = '⚠️ 已驗證，但建議新增至至少 3 組金鑰';
-      status.className = 'status-indicator success warn';
+      status.innerText = '✅ 已驗證有效 (建議新增至 3 組不同帳號金鑰)';
+      status.className = 'status-indicator success';
     } else {
       status.innerText = '✅ API Key 已驗證有效';
       status.className = 'status-indicator success';
