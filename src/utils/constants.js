@@ -53,8 +53,8 @@ export const CACHE_CONFIG = {
 
 // RAG 設定
 export const RAG_CONFIG = {
-  CHUNK_SIZE: 500,             // tokens
-  CHUNK_OVERLAP: 100,          // tokens
+  CHUNK_SIZE: 1000,            // tokens
+  CHUNK_OVERLAP: 150,          // tokens
   TOP_K: 5,                    // 搜尋結果數
   SIMILARITY_THRESHOLD: 0.3,   // 最低相似度門檻
   VECTOR_WEIGHT: 0.7,          // 混合搜尋中向量權重

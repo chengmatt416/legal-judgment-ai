@@ -31,9 +31,21 @@ async function initSettingsAndTheme() {
       setTheme(settings.theme || 'dark');
 
       // 填入 API Key
-      renderApiKeys('popup-api-keys-container', settings.geminiApiKey);
-      if (settings.geminiApiKey) {
-        updateApiKeyStatus(true);
+      const apiKeyString = settings.geminiApiKey || '';
+      renderApiKeys('popup-api-keys-container', apiKeyString);
+      
+      const keys = apiKeyString.split(/[\s,;\n]+/).map(k => k.trim()).filter(Boolean);
+      const hintAlert = document.getElementById('popup-key-hint-alert');
+      if (hintAlert) {
+        if (keys.length > 0 && keys.length < 3) {
+          hintAlert.style.display = 'block';
+        } else {
+          hintAlert.style.display = 'none';
+        }
+      }
+
+      if (apiKeyString) {
+        updateApiKeyStatus(true, keys.length);
       } else {
         updateApiKeyStatus(false);
       }
@@ -146,11 +158,16 @@ function updateFooterStats(dbs, activeId) {
 /**
  * 更新 API Key 狀態 UI
  */
-function updateApiKeyStatus(isValid) {
+function updateApiKeyStatus(isValid, keyCount = 0) {
   const status = document.getElementById('api-key-status');
   if (isValid) {
-    status.innerText = '✅ API Key 已驗證有效';
-    status.className = 'status-indicator success';
+    if (keyCount > 0 && keyCount < 3) {
+      status.innerText = '⚠️ 已驗證，但建議新增至至少 3 組金鑰';
+      status.className = 'status-indicator success warn';
+    } else {
+      status.innerText = '✅ API Key 已驗證有效';
+      status.className = 'status-indicator success';
+    }
   } else {
     status.innerText = '⚠️ API Key 未設定或驗證無效';
     status.className = 'status-indicator error';
@@ -221,8 +238,23 @@ function setupEventListeners() {
           type: 'UPDATE_SETTINGS',
           settings: { geminiApiKey: apiKey }
         }, () => {
-          updateApiKeyStatus(true);
-          showToast('✅ API 密鑰驗證並儲存成功！');
+          const keys = apiKey ? apiKey.split(/[\s,;\n]+/).map(k => k.trim()).filter(Boolean) : [];
+          updateApiKeyStatus(true, keys.length);
+          
+          const hintAlert = document.getElementById('popup-key-hint-alert');
+          if (hintAlert) {
+            if (keys.length > 0 && keys.length < 3) {
+              hintAlert.style.display = 'block';
+            } else {
+              hintAlert.style.display = 'none';
+            }
+          }
+
+          if (keys.length < 3) {
+            showToast('✅ 儲存成功！建議設定至少 3 組金鑰以防 RPD/RPM 限制。');
+          } else {
+            showToast('✅ API 密鑰驗證並儲存成功！');
+          }
         });
       } else {
         updateApiKeyStatus(false);

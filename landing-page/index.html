@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>法律判決 AI 摘要助手 | 專業法律人的 AI 判決書分析與 RAG 混合檢索工具</title>
+  <meta name="description" content="專為司法院裁判書查詢系統設計的 Chrome 擴充功能。支援 AI 智慧摘要、爭點分析、三層標籤管理、本地 RAG 智慧文庫問答與 Cloudflare 雲端增量同步。">
+  
+  <!-- SEO Open Graph -->
+  <meta property="og:title" content="法律判決 AI 摘要助手 | 專業法律人的智慧分析工具">
+  <meta property="og:description" content="AI 智慧摘要、法學爭點分析、本地 RAG 智慧問答與 Cloudflare 雲端增量同步，極速提昇法學研究效率。">
+  <meta property="og:type" content="website">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Background decorative glows -->
+  <div class="glow-bg glow-1"></div>
+  <div class="glow-bg glow-2"></div>
+
+  <!-- Floating Navigation Bar -->
+  <nav class="navbar" id="main-navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo" id="nav-logo-link">
+        <svg class="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22a7 7 0 0 0 7-7V5l-7-3-7 3v10a7 7 0 0 0 7 7z"></path>
+          <path d="M12 8v8"></path>
+          <path d="M8 11h8"></path>
+        </svg>
+        <span class="logo-text">Legal Judgment <span class="highlight">AI</span></span>
+      </a>
+      
+      <div class="nav-links" id="nav-menu">
+        <a href="#features" class="nav-link">功能特點</a>
+        <a href="#demo" class="nav-link">線上體驗</a>
+        <a href="#workflow" class="nav-link">運作流程</a>
+        <a href="#sync-section" class="nav-link">雲端同步</a>
+        <a href="https://github.com/chengmatt416/legal-judgment-ai" class="btn btn-secondary cursor-pointer" target="_blank">
+          <span>GitHub 原始碼</span>
+        </a>
+        <a href="#download" class="btn btn-primary cursor-pointer">
+          <span>安裝擴充功能</span>
+        </a>
+      </div>
+      
+      <button class="mobile-menu-toggle cursor-pointer" id="mobile-toggle" aria-label="切換選單">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section" id="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          <span>Manifest V3 規格擴充功能</span>
+        </div>
+        <h1 class="hero-title">AI 智慧解析<br><span class="gradient-text">點沙成金</span>的法學利器</h1>
+        <p class="hero-subtitle">
+          專為「司法院裁判書查詢系統」打造。自動摘要事實、解析法學爭點、套用三層智慧標籤，並在本地運行極速的 RAG 向量知識庫問答，讓判決研讀效率提升 10 倍以上。
+        </p>
+        <div class="hero-actions">
+          <a href="#download" class="btn btn-primary btn-lg cursor-pointer">
+            <svg class="w-5 h-5 inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            免費安裝 Extension
+          </a>
+          <a href="#demo" class="btn btn-secondary btn-lg cursor-pointer">
+            <svg class="w-5 h-5 inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            模擬體驗 RAG 問答
+          </a>
+        </div>
+        
+        <!-- Quick Credibility Markers -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">本地隱私保障</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">0.1s</span>
+            <span class="stat-label">混合檢索響應</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">Free</span>
+            <span class="stat-label">Gemini 額度優化</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual: Interactive Mock Extension Panel -->
+      <div class="hero-visual">
+        <div class="mock-browser">
+          <div class="browser-header">
+            <div class="browser-dots">
+              <span class="dot-red"></span>
+              <span class="dot-yellow"></span>
+              <span class="dot-green"></span>
+            </div>
+            <div class="browser-address">
+              <svg class="w-3 h-3 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>judgment.judicial.gov.tw/law/default.aspx</span>
+            </div>
+          </div>
+          <div class="browser-body">
+            <!-- Simulated background court document -->
+            <div class="court-document-content">
+              <h3>臺灣臺北地方法院 112 年度訴字第 9999 號民事判決</h3>
+              <p>原告與被告因返還消費借貸等事件，提起本件訴訟。原告主張被告於民國110年3月向原告借款新台幣150萬元，約定於111年3月償還，詎料被告擺爛未還...</p>
+              <p>被告則以：其確實有收到該筆款項，但該筆款項為原告委託被告進行虛擬貨幣投資之資金，非屬借貸關係，且雙方並無借貸合意...</p>
+            </div>
+            
+            <!-- Floating AI Panel Overlay with Glassmorphism -->
+            <div class="mock-floating-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <svg class="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22a7 7 0 0 0 7-7V5l-7-3-7 3v10a7 7 0 0 0 7 7z"></path>
+                  </svg>
+                  <span>法律判決 AI 助理</span>
+                </div>
+                <div class="panel-controls">
+                  <span class="control-dot shrink"></span>
+                  <span class="control-dot close"></span>
+                </div>
+              </div>
+              <div class="panel-tabs">
+                <button class="panel-tab-btn active cursor-pointer" data-panel-tab="summary">AI 摘要</button>
+                <button class="panel-tab-btn cursor-pointer" data-panel-tab="rag">智慧問答</button>
+                <button class="panel-tab-btn cursor-pointer" data-panel-tab="tags">智慧標籤</button>
+              </div>
+              <div class="panel-body">
+                
+                <!-- Tab content 1: Summary -->
+                <div class="panel-tab-content active" id="tab-summary">
+                  <div class="meta-section">
+                    <span class="meta-badge">案由：返還借款</span>
+                    <span class="meta-badge">法院：臺北地院</span>
+                  </div>
+                  <div class="summary-block">
+                    <div class="summary-title">📜 事實摘要 (AI 生成)</div>
+                    <p class="summary-text text-sm">
+                      原告主張被告借貸 150 萬元逾期未還。被告抗辯該款項為委託投資款而非借款。法院審理後認定：原告未能提出借賃契約，且通訊軟體對話中均提及「虛擬幣」、「利潤分紅」，核與借貸常情不符。因此，難以認定雙方有借貸合意，駁回原告訴訟。
+                    </p>
+                  </div>
+                  <div class="summary-block mt-2">
+                    <div class="summary-title text-primary">⚖️ 法學爭點與論理</div>
+                    <ul class="argument-list text-xs">
+                      <li><strong>原告主張：</strong>匯款單及對話紀錄可證雙方有借貸關係。</li>
+                      <li><strong>被告主張：</strong>該款為合夥委託投資款，並無借貸合意.</li>
+                      <li><strong>法院論理：</strong>交付金錢原因多端，匯款僅能證明交付金錢，不能證明借貸合意。原告未能舉證，應承擔不利後果。</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Tab content 2: RAG Q&A -->
+                <div class="panel-tab-content" id="tab-rag">
+                  <div class="rag-chat-messages">
+                    <div class="chat-msg user">
+                      <span>法院駁回原告的關鍵原因是什麼？</span>
+                    </div>
+                    <div class="chat-msg ai">
+                      <div class="ai-source-badge">RAG 混合檢索命中 (92% 相似度)</div>
+                      <span>法院駁回的關鍵在於<strong>「舉證責任的分配」</strong>。交付金錢之原因甚多（可能為贈與、投資或償債），匯款單僅能證明匯款事實。原告必須證明雙方有「借貸合意」，因原告對此無法提出借據或足夠證據，故判決敗訴。</span>
+                      <div class="ai-citation">引用來源：民事訴訟法第277條、判決事實三</div>
+                    </div>
+                  </div>
+                  <div class="rag-input-area">
+                    <input type="text" class="input input-sm flex-1" placeholder="問問這個案子的細節..." readonly>
+                    <button class="btn btn-primary btn-sm btn-icon cursor-pointer">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Tab content 3: Smart Tags -->
+                <div class="panel-tab-content" id="tab-tags">
+                  <div class="tags-group">
+                    <div class="tags-group-title">🏷️ 系統標籤 (System)</div>
+                    <div class="tags-list">
+                      <span class="tag tag-system">民事第一審</span>
+                      <span class="tag tag-system">臺北地方法院</span>
+                    </div>
+                  </div>
+                  <div class="tags-group mt-3">
+                    <div class="tags-group-title">🤖 AI 推薦標籤 (信心度 &ge; 0.7)</div>
+                    <div class="tags-list">
+                      <span class="tag tag-ai">消費借貸 <span class="score">0.98</span></span>
+                      <span class="tag tag-ai">舉證責任分配 <span class="score">0.91</span></span>
+                      <span class="tag tag-ai-suggest">委任關係 <span class="score">0.58 (建議)</span></span>
+                    </div>
+                  </div>
+                  <div class="tags-group mt-3">
+                    <div class="tags-group-title">👤 自訂使用者標籤 (User)</div>
+                    <div class="tags-list" id="mock-user-tags">
+                      <span class="tag tag-user">112年重要判決</span>
+                      <span class="tag tag-user">虛擬貨幣糾紛</span>
+                      <button class="tag-add-btn cursor-pointer">+</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="panel-footer">
+                <span class="status-indicator-active"></span>
+                <span class="text-muted text-xs">Gemini 3.5 Flash 運作中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bento Grid Features Section -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">全方位法學效率引擎</h2>
+        <p class="section-desc">基於 Manifest V3 與 Chrome 原生 IndexedDB 打造的高效能架構，完美平衡 AI 智慧與本地隱私安全。</p>
+      </div>
+
+      <div class="bento-grid">
+        
+        <!-- Bento 1: AI Summary & Arguments (Large Card) -->
+        <div class="bento-card col-span-2 row-span-2" id="feature-ai">
+          <div class="bento-icon bg-primary-light">
+            <svg class="w-6 h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <h3 class="bento-title">AI 智慧摘要與核心爭點剖析</h3>
+          <p class="bento-desc">
+            針對極為冗長複雜的判決書，AI 會在 1.5 秒內梳理出 500 字以內事實摘要與判決結論。同時，它會自動將檢察官、原告與被告的論點及法院心證依據清晰地列表呈現，免去法律人逐字梳理的時間。
+          </p>
+          <div class="bento-visual-preview">
+            <div class="argument-flow">
+              <div class="flow-step">兩造主張 <span class="flow-arrow">➔</span></div>
+              <div class="flow-step highlight">法院論理剖析 <span class="flow-arrow">➔</span></div>
+              <div class="flow-step">引用裁判依據</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bento 2: Local Hybrid RAG Q&A (Medium Card) -->
+        <div class="bento-card" id="feature-rag">
+          <div class="bento-icon bg-accent-light">
+            <svg class="w-6 h-6 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <path d="M11 8v6"></path>
+              <path d="M8 11h6"></path>
+            </svg>
+          </div>
+          <h3 class="bento-title">100% 本地 RAG 智慧文庫問答</h3>
+          <p class="bento-desc">
+            將判決書文字切塊並轉換為向量（Embedding），直接在瀏覽器本地的 IndexedDB 儲存與混合檢索（70% 向量 + 30% 關鍵字），實現無需任何雲端伺服器中介的隱私安全問答。
+          </p>
+        </div>
+
+        <!-- Bento 3: 3-Layer Intelligent Tagging (Medium Card) -->
+        <div class="bento-card" id="feature-tags">
+          <div class="bento-icon bg-success-light">
+            <svg class="w-6 h-6 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+          </div>
+          <h3 class="bento-title">三層結構化智慧標籤</h3>
+          <p class="bento-desc">
+            首創「系統標籤（法院與審級）」、「AI 推薦標籤（依信心度自動與建議套用）」及「使用者自訂標籤」，協助您以極高效率對上千篇判決進行多維度檢索與分類。
+          </p>
+        </div>
+
+        <!-- Bento 4: Security Shadow DOM Isolation (Small Card) -->
+        <div class="bento-card" id="feature-sandbox">
+          <div class="bento-icon bg-info-light">
+            <svg class="w-6 h-6 text-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h3 class="bento-title">Shadow DOM 懸浮視窗</h3>
+          <p class="bento-desc">
+            懸浮面板採用 Shadow DOM 進行完全的樣式隔離，絕不污染司法院網頁原有排版。支持滑鼠拖曳、隨意縮放大小並自動記憶視窗狀態。
+          </p>
+        </div>
+
+        <!-- Bento 5: Incremental Cloud Sync (Small Card) -->
+        <div class="bento-card" id="feature-sync">
+          <div class="bento-icon bg-warning-light">
+            <svg class="w-6 h-6 text-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 12a11 11 0 0 1-22 0 11 11 0 0 1 22 0z"></path>
+              <path d="M16 12l-4-4-4 4"></path>
+              <path d="M12 8v8"></path>
+            </svg>
+          </div>
+          <h3 class="bento-title">Cloudflare 增量雲端同步</h3>
+          <p class="bento-desc">
+            可自建 Cloudflare Worker 與 D1 雲端資料庫。透過 Last-Writer-Wins (LWW) 戳記演算法，僅針對變更內容進行增量更新，極度節省網路頻寬。
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo Widget (The RAG Simulator) -->
+  <section class="demo-section" id="demo">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">線上功能與 RAG 問答互動體驗</h2>
+        <p class="section-desc">點選下方不同的經典法學案例，即可模擬擴充功能在瀏覽器中對該判決進行智慧分析與 RAG 問答的真實效果。</p>
+      </div>
+
+      <div class="demo-widget-container">
+        
+        <!-- Case Selector Sidebar -->
+        <div class="case-selector-sidebar">
+          <div class="sidebar-title">🎯 選擇法學案例進行模擬</div>
+          
+          <div class="case-item active cursor-pointer" data-case-id="theft-case">
+            <div class="case-badge criminal">刑事</div>
+            <div class="case-title">112 年度易字第 120 號 (竊盜抗辯)</div>
+            <div class="case-summary-preview">被告撿拾路旁腳踏車，抗辯為無主物且無竊盜故意...</div>
+          </div>
+
+          <div class="case-item cursor-pointer" data-case-id="contract-case">
+            <div class="case-badge civil">民事</div>
+            <div class="case-title">111 年度訴字第 450 號 (工程違約金)</div>
+            <div class="case-summary-preview">業主因工程逾期扣款，承攬人主張疫情屬不可抗力...</div>
+          </div>
+
+          <div class="case-item cursor-pointer" data-case-id="labor-case">
+            <div class="case-badge labor">勞資</div>
+            <div class="case-title">110 年度勞訴字第 85 號 (解雇爭議)</div>
+            <div class="case-summary-preview">公司以業務緊縮為由資遣員工，員工抗辯違反最後手段性...</div>
+          </div>
+        </div>
+
+        <!-- Interactive AI RAG Console -->
+        <div class="demo-rag-console">
+          <div class="console-header">
+            <div class="console-details">
+              <span class="console-case-number" id="active-case-no">112 年度易字第 120 號</span>
+              <span class="divider">|</span>
+              <span class="console-case-cause" id="active-case-cause">竊盜罪</span>
+            </div>
+            <div class="console-source">
+              <span class="active-badge">模擬 RAG 向量文庫</span>
+            </div>
+          </div>
+          
+          <div class="console-content">
+            <div class="console-pane left">
+              <h4 class="pane-title">📝 判決事實 AI 摘要與法律爭點</h4>
+              <div class="pane-scroll-body" id="pane-summary-text">
+                <!-- Dynamically updated via script.js -->
+                <div class="loading-shimmer">
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="console-pane right">
+              <h4 class="pane-title">💬 RAG 智慧對話（您可以點選預設問題或自行輸入）</h4>
+              <div class="pane-scroll-body chat-messages-container" id="pane-chat-box">
+                <!-- Dynamically updated -->
+              </div>
+              
+              <!-- Suggested Questions -->
+              <div class="suggested-questions" id="pane-suggestions">
+                <!-- Dynamically updated -->
+              </div>
+
+              <!-- Chat Input -->
+              <form class="console-chat-input-form" id="chat-input-form">
+                <input type="text" class="input flex-1" id="chat-user-input" placeholder="請輸入您想針對本判決書提問的問題..." required>
+                <button type="submit" class="btn btn-primary cursor-pointer" id="chat-send-btn">
+                  <span>提問</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Step-by-Step Workflow -->
+  <section class="workflow-section" id="workflow">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">僅需三步，大幅提升研究深度</h2>
+        <p class="section-desc">無縫嵌入您的日常法學工作流，從資料搜集到案件交叉對照一氣呵成。</p>
+      </div>
+
+      <div class="workflow-steps">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <h3 class="step-title">一鍵載入與智慧分析</h3>
+          <p class="step-desc">
+            在司法院網站閱讀判決書時，右側懸浮視窗將自動開啟。AI 即時完成事實摘要、爭點表格整理、法條參考與 AI 標籤的提取。
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <h3 class="step-title">建立多重研究文庫</h3>
+          <p class="step-desc">
+            依研究主題建立不同的本地資料庫，一鍵將分析後的裁判書加入文庫。背景將自動以 Embedding 技術切塊並建立高維度向量索引。
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <h3 class="step-title">RAG 混合法學對話</h3>
+          <p class="step-desc">
+            遭遇新型案例時，直接在對話欄中以自然語言發問。系統會自當前資料庫中精準抓取最相似的判決事實，融會貫通後給出具備依據的分析。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cloudflare Sync Showcase Section -->
+  <section class="sync-section-wrapper" id="sync-section">
+    <div class="container sync-container">
+      <div class="sync-info">
+        <div class="badge badge-accent">
+          <span>企業級同步架構</span>
+        </div>
+        <h2 class="sync-title">多端增量同步，資料永不遺失</h2>
+        <p class="sync-desc">
+          本擴充功能提供高度的開源自主性。使用者可一鍵配置自行部署在 Cloudflare Pages / Workers 上的後端服務，結合 Cloudflare D1 邊緣分散式資料庫，享有全方位的跨裝置增量同步功能。
+        </p>
+        <ul class="sync-features-list">
+          <li>
+            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span><strong>增量時間戳比對 (Last-Writer-Wins)：</strong>僅上傳與下載更動過的資料，節省 90% 流量與 API 請求數。</span>
+          </li>
+          <li>
+            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span><strong>離線優先與增量匯入：</strong>在無網路狀態下仍可自由研讀與記錄，上線後一鍵與雲端整合。</span>
+          </li>
+          <li>
+            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span><strong>無縫備份與 Embedding 封裝：</strong>匯出 ZIP 即完整包含所有預先計算的向量資訊，換電腦無痛匯入免除二次生成配額。</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Cloudflare Worker Visual Architecture Panel -->
+      <div class="sync-visual">
+        <div class="arch-card">
+          <div class="arch-node client-node">
+            <svg class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>
+            <div class="node-info">
+              <span class="node-name">Chrome Extension</span>
+              <span class="node-sub">IndexedDB + Vector Store</span>
+            </div>
+          </div>
+          
+          <div class="arch-flow-arrow">
+            <div class="flow-line"></div>
+            <div class="flow-label">JSON Diff 同步協定</div>
+          </div>
+
+          <div class="arch-node worker-node">
+            <svg class="w-8 h-8 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+              <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+              <line x1="6" y1="6" x2="6.01" y2="6"></line>
+              <line x1="6" y1="18" x2="6.01" y2="18"></line>
+            </svg>
+            <div class="node-info">
+              <span class="node-name">Cloudflare Workers</span>
+              <span class="node-sub">JWT 驗證與邏輯分流</span>
+            </div>
+          </div>
+
+          <div class="arch-flow-arrow">
+            <div class="flow-line"></div>
+            <div class="flow-label">SQLite 批次寫入</div>
+          </div>
+
+          <div class="arch-node database-node">
+            <svg class="w-8 h-8 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"></path>
+            </svg>
+            <div class="node-info">
+              <span class="node-name">Cloudflare D1 (SQLite)</span>
+              <span class="node-sub">邊緣關聯式資料庫</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section" id="download">
+    <div class="container cta-container">
+      <div class="cta-content text-center">
+        <h2 class="cta-title">立即解鎖您的智慧法律大腦</h2>
+        <p class="cta-desc">
+          本專案為非公開提案，支援設定多金鑰自動輪替。建議設定至少 3 組以上的 Gemini Free Tier API Key（或使用付費版 Key），以防密集分析時頻繁撞到 API RPD / RPM 限制。所有資料處理均在本地沙盒進行，安全無虞。
+        </p>
+        
+        <div class="cta-download-buttons">
+          <a href="https://github.com/chengmatt416/legal-judgment-ai/releases/download/Main/chrome-edge.zip" class="btn btn-cta btn-lg cursor-pointer" target="_blank">
+            <svg class="w-6 h-6 inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            下載 Chrome / Edge (.zip)
+          </a>
+          <a href="https://github.com/chengmatt416/legal-judgment-ai/releases/download/Main/firefox.zip" class="btn btn-cta btn-lg cursor-pointer" target="_blank">
+            <svg class="w-6 h-6 inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            下載 Firefox (.zip)
+          </a>
+          <a href="https://github.com/chengmatt416/legal-judgment-ai/tree/main/cloudflare-worker" class="btn btn-secondary btn-lg btn-white-border cursor-pointer" target="_blank">
+            <svg class="w-6 h-6 inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            部署 Cloudflare Sync Worker
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo">
+          <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22a7 7 0 0 0 7-7V5l-7-3-7 3v10a7 7 0 0 0 7 7z"></path>
+          </svg>
+          <span>Legal Judgment <span class="highlight">AI</span></span>
+        </a>
+        <p class="brand-desc text-sm">
+          引領法律研究的智慧化革命，以離線優先 of RAG 與先進的大型語言模型，賦能新世代法律工作者。
+        </p>
+      </div>
+      
+      <div class="footer-links">
+        <h4 class="footer-link-title">專案導覽</h4>
+        <a href="#features">功能特點</a>
+        <a href="#demo">動態體驗</a>
+        <a href="#workflow">運作流程</a>
+        <a href="#sync-section">雲端同步架構</a>
+      </div>
+
+      <div class="footer-links">
+        <h4 class="footer-link-title">開源與發布</h4>
+        <a href="https://github.com/chengmatt416/legal-judgment-ai" target="_blank">GitHub Repository</a>
+        <a href="https://github.com/chengmatt416/legal-judgment-ai/blob/main/LICENSE" target="_blank">授權條款</a>
+        <a href="https://github.com/chengmatt416/legal-judgment-ai/tree/main/cloudflare-worker" target="_blank">Cloudflare Worker 後端</a>
+        <a href="https://ai.google.dev/" target="_blank">Gemini API 說明文件</a>
+      </div>
+
+      <div class="footer-links">
+        <h4 class="footer-link-title">系統管理與隱私</h4>
+        <a href="#" id="admin-portal-link">管理員控制台</a>
+        <p class="text-xs text-muted mt-2">
+          100% 離線沙盒隔離，三層智慧標籤與 RAG 運算完全於瀏覽器沙盒 (IndexedDB) 執行。
+        </p>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom text-center">
+      <p class="text-xs text-muted">&copy; 2026 Legal Judgment AI. All rights reserved.</p>
+    </div>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

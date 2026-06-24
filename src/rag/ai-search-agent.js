@@ -620,7 +620,7 @@ export async function aiSearchAgent(apiKey, model, mode, userPrompt, onProgress)
   const searchHistory = [];
   let isSufficient = false;
   let round = 0;
-  const maxRounds = 14;
+  const maxRounds = 3;
 
   // 2. 多輪 AI 決定關鍵字搜尋與自我審查迴圈
   while (round < maxRounds && !isSufficient) {
@@ -737,8 +737,8 @@ ${listForAI.join('\n')}
     round++;
   }
 
-  // 3. 擷取判決書內容 (最多擷取 5 篇，避免 token 爆炸)
-  const finalJudgmentsToAnalyze = allFoundJudgments.slice(0, 5);
+  // 3. 擷取判決書內容 (最多擷取 3 篇，避免 token 爆炸)
+  const finalJudgmentsToAnalyze = allFoundJudgments.slice(0, 3);
   if (finalJudgmentsToAnalyze.length === 0) {
     return {
       answer: `抱歉，經過多輪搜尋，系統未能在司法院網站上找到與「${userPrompt}」直接相關的公開裁判書。這可能是因為：\n1. 關鍵字過於具體或罕見。\n2. 此類案件多以和解、調解結案，或依法不予公開。\n\n建議您調整輸入語法，以更簡潔的觀念詞（如「不當得利」、「消極確認之訴」）重新查詢。`,

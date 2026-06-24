@@ -67,7 +67,20 @@ function initTabNavigation() {
 async function loadSettingsForm() {
   currentSettings = await getSettings();
 
-  renderApiKeys('options-api-keys-container', currentSettings.geminiApiKey || '');
+  const keysString = currentSettings.geminiApiKey || '';
+  renderApiKeys('options-api-keys-container', keysString);
+  
+  // 檢查金鑰數量並決定是否顯示警告橫幅
+  const keys = keysString.split(/[\s,;\n]+/).map(k => k.trim()).filter(Boolean);
+  const hintAlert = document.getElementById('options-key-hint-alert');
+  if (hintAlert) {
+    if (keys.length > 0 && keys.length < 3) {
+      hintAlert.style.display = 'block';
+    } else {
+      hintAlert.style.display = 'none';
+    }
+  }
+
   document.getElementById('opt-model').value = currentSettings.geminiModel || 'gemini-3.5-flash';
   
   // 懸浮視窗偏好
@@ -102,7 +115,22 @@ async function saveSettingsForm() {
       if (response && response.success && response.isValid) {
         try {
           await saveSettings(newSettings);
-          showToast('✅ 設定已驗證並儲存成功！');
+          
+          const keys = apiKey.split(/[\s,;\n]+/).map(k => k.trim()).filter(Boolean);
+          const hintAlert = document.getElementById('options-key-hint-alert');
+          if (hintAlert) {
+            if (keys.length > 0 && keys.length < 3) {
+              hintAlert.style.display = 'block';
+            } else {
+              hintAlert.style.display = 'none';
+            }
+          }
+
+          if (keys.length < 3) {
+            showToast('✅ 設定已儲存！建議設定至少 3 組金鑰以防 RPD/RPM 限制。');
+          } else {
+            showToast('✅ 設定已驗證並儲存成功！');
+          }
         } catch (err) {
           showToast(`❌ 儲存失敗: ${err.message}`);
         }
